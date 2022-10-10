@@ -38,6 +38,8 @@
         "drupal/focal_point": "^1.5",
         "drupal/intl_date": "^1.1",
         "drupal/media_entity_browser": "^2",
+        "drupal/message": "1.x-dev@dev",
+        "drupal/message_notify": "1.x-dev@dev",
         "drupal/migrate_file": "^2.0",
         "drupal/migrate_plus": "^5.1",
         "drupal/migrate_source_csv": "^3.4",

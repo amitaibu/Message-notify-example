@@ -1,0 +1,21 @@
+uuid: d2373290-a918-471c-9798-ed408b148c46
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.message.news_item.field_news
+    - message.template.news_item
+id: message.news_item.default
+targetEntityType: message
+bundle: news_item
+mode: default
+content:
+  partial_0:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_news: true
+  partial_1: true
+  search_api_excerpt: true

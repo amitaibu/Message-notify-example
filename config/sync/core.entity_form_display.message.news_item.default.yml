@@ -1,0 +1,23 @@
+uuid: d2d2559b-55f4-4a67-97a3-c415b139adf1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.message.news_item.field_news
+    - message.template.news_item
+id: message.news_item.default
+targetEntityType: message
+bundle: news_item
+mode: default
+content:
+  field_news:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

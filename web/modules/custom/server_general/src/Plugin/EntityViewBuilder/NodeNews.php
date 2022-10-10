@@ -4,9 +4,12 @@ namespace Drupal\server_general\Plugin\EntityViewBuilder;
 
 use Drupal\intl_date\IntlDate;
 use Drupal\media\MediaInterface;
+use Drupal\message\MessageInterface;
+use Drupal\message_notify\MessageNotifier;
 use Drupal\node\NodeInterface;
 use Drupal\server_general\EntityDateTrait;
 use Drupal\server_general\EntityViewBuilder\NodeViewBuilderAbstract;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The "Node News" plugin.
@@ -20,6 +23,23 @@ use Drupal\server_general\EntityViewBuilder\NodeViewBuilderAbstract;
 class NodeNews extends NodeViewBuilderAbstract {
 
   use EntityDateTrait;
+
+  /**
+   * The message notification service.
+   *
+   * @var \Drupal\message_notify\MessageNotifier
+   */
+  protected MessageNotifier $messageNotifier;
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $build = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $build->messageNotifier = $container->get('message_notify.sender');
+
+    return $build;
+  }
 
   /**
    * Build full view mode.
@@ -49,6 +69,8 @@ class NodeNews extends NodeViewBuilderAbstract {
     $element = $this->wrapElementProseText($element);
     $build[] = $this->wrapElementWideContainer($element);
 
+    $this->deliverMessage($entity);
+
     return $build;
   }
 
@@ -77,6 +99,79 @@ class NodeNews extends NodeViewBuilderAbstract {
     $build[] = $element;
 
     return $build;
+  }
+
+  /**
+   *
+   */
+  protected function deliverMessage(NodeInterface $entity) {
+    // Create a single Message. Rest of the Messages would be clones, that may
+    // or may not be saved.
+    $message_storage = $this->entityTypeManager->getStorage('message');
+    /** @var \Drupal\message\MessageInterface $message */
+    $message = $message_storage->create([
+      'template' => 'news_item',
+      'arguments' => [
+        [
+          '@title' => [
+            'pass message' => TRUE,
+            'callback' => [static::class, 'getMessageTitle'],
+          ],
+          '@url' => [
+            'pass message' => TRUE,
+            'callback' => [static::class, 'getMessageUrl'],
+          ],
+          '@user' => [
+            'pass message' => TRUE,
+            'callback' => [static::class, 'getMessageUser'],
+          ],
+          '@calc' => [
+            'pass message' => TRUE,
+            'callback' => [static::class, 'getMessageComplexCalc'],
+          ],
+        ],
+      ],
+    ]);
+    $message->field_news = $entity;
+    $message->save();
+
+    // Iterate over all existing users.
+    $user_storage = $this->entityTypeManager->getStorage('user');
+    $users = $user_storage->loadByProperties(['status' => TRUE]);
+
+    foreach ($users as $user) {
+      $cloned_message = $message->createDuplicate();
+      $cloned_message->setOwner($user);
+      $this->messageNotifier->send($cloned_message, [], 'email');
+    }
+  }
+
+  /**
+   * Get title.
+   */
+  public static function getMessageTitle(MessageInterface $message): string {
+    return $message->field_news->entity->label();
+  }
+
+  /**
+   * Get URL.
+   */
+  public static function getMessageUrl(MessageInterface $message): string {
+    return $message->field_news->entity->toUrl()->toString();
+  }
+
+  /**
+   * Get User's name.
+   */
+  public static function getMessageUser(MessageInterface $message): string {
+    return $message->getOwner()->label();
+  }
+
+  /**
+   * Get complex calc.
+   */
+  public static function getMessageComplexCalc(MessageInterface $message): string {
+    return sprintf('Calculated at %d', time());
   }
 
 }

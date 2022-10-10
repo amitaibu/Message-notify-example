@@ -1,0 +1,22 @@
+uuid: 716eec96-766e-4d0e-9d0f-cf1057e84d76
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.message.mail_body
+    - field.field.message.news_item.field_news
+    - message.template.news_item
+id: message.news_item.mail_body
+targetEntityType: message
+bundle: news_item
+mode: mail_body
+content:
+  partial_1:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_news: true
+  partial_0: true
+  search_api_excerpt: true
