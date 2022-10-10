@@ -102,7 +102,10 @@ class NodeNews extends NodeViewBuilderAbstract {
   }
 
   /**
+   * Deliver a Message to all site users.
    *
+   * @param \Drupal\node\NodeInterface $entity
+   *   The entity.
    */
   protected function deliverMessage(NodeInterface $entity) {
     // Create a single Message. Rest of the Messages would be clones, that may
