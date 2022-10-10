@@ -143,6 +143,7 @@ class NodeNews extends NodeViewBuilderAbstract {
     $users = $user_storage->loadByProperties(['status' => TRUE]);
 
     foreach ($users as $user) {
+      // Clone the Message, and set the owner to the recipient.
       $cloned_message = $message->createDuplicate();
       $cloned_message->setOwner($user);
       $this->messageNotifier->send($cloned_message, [], 'email');
