@@ -171,7 +171,7 @@ class NodeNews extends NodeViewBuilderAbstract {
    * Get complex calc.
    */
   public static function getMessageComplexCalc(MessageInterface $message): string {
-    return sprintf('Calculated at %d', time());
+    return sprintf('Calculated as %d', rand(1, 9999));
   }
 
 }
