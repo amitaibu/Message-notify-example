@@ -1,0 +1,22 @@
+uuid: a260bb37-7516-4f63-9ece-5be30be02834
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+template: news_item
+label: 'News item'
+description: 'Send a message about a News item'
+text:
+  -
+    value: "<p>@title was viewed</p>\r\n"
+    format: basic_html
+  -
+    value: "<p>Hi @user,</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>You have subscribed to &lt;a href=\"@url\"&gt;@title&lt;/a&gt; so you got this mail.</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>Here's some complex calc just for you @calc</p>\r\n"
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': false
+  purge_override: false
+  purge_methods: {  }
